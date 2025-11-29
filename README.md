@@ -2,6 +2,31 @@
 
 TPC-H PART와 PARTSUPP 테이블에 대한 Block Nested Loops Join 구현
 
+## 🚀 빠른 시작
+
+**30초 만에 실행하기:**
+
+### Windows
+```cmd
+build-windows.bat
+run-simple.bat
+```
+
+### Linux / WSL / macOS
+```bash
+./run-simple.sh
+```
+
+### Docker (모든 플랫폼)
+```bash
+docker build -t dbsys .
+docker run dbsys --help
+```
+
+**자세한 실행 방법**: [QUICK_START.md](QUICK_START.md) 참조
+
+---
+
 ## 프로젝트 개요
 
 이 프로젝트는 데이터베이스 시스템의 핵심 연산인 Join을 Block Nested Loops 알고리즘으로 구현한 것입니다. C++로 작성되었으며, 고정 크기 블록에 가변 길이 레코드를 저장하는 방식을 사용합니다.
@@ -75,15 +100,35 @@ DBSys/
 ## 빌드 방법
 
 ### 요구사항
-- C++11 이상 지원 컴파일러 (g++)
-- Make
-- Ubuntu/Linux 환경
+- **Linux/WSL/macOS**: g++ 또는 clang (C++11 이상)
+- **Windows**: Visual Studio 2019+ 또는 MinGW
+- Make 또는 CMake
+- (선택) Docker
 
-### 컴파일
+### 간단 빌드 (권장)
+
+**Windows:**
+```cmd
+build-windows.bat
+```
+
+**Linux/WSL:**
 ```bash
 make                # 최적화 빌드
 make debug          # 디버그 빌드
 make clean          # 빌드 파일 삭제
+```
+
+**CMake (크로스 플랫폼):**
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+```
+
+**Docker:**
+```bash
+docker build -t dbsys .
 ```
 
 ## 사용 방법
