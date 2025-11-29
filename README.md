@@ -396,7 +396,25 @@ Memory Usage: 40960 bytes (0.039 MB)
 
 ## TPC-H 테스트 데이터 준비
 
-### 방법 1: TPC-H 데이터 생성
+### ⭐ 간편한 방법: 자동 생성 스크립트
+
+**Linux/WSL:**
+```bash
+./generate_data.sh
+# 메뉴에서 원하는 크기 선택 (권장: Scale 0.1)
+```
+
+**Windows:**
+```cmd
+generate_data.bat
+REM WSL을 통해 자동으로 데이터 생성
+```
+
+**자세한 가이드**: [GENERATE_DATA.md](GENERATE_DATA.md) 참조
+
+---
+
+### 방법 1: 수동 TPC-H 데이터 생성
 
 ```bash
 # TPC-H dbgen 도구 다운로드 및 컴파일
@@ -405,12 +423,12 @@ cd tpch-dbgen
 make
 
 # 데이터 생성 (Scale Factor에 따라 크기 조절)
-./dbgen -s 0.1          # 0.1 = 약 100MB
-./dbgen -s 1            # 1 = 약 1GB
+./dbgen -s 0.1          # 0.1 = 약 100MB (과제 제출 권장)
+./dbgen -s 1            # 1 = 약 1GB (성능 벤치마크)
 
-# 생성된 .tbl 파일을 DBSys data/ 디렉토리로 복사
-cp part.tbl partsupp.tbl ../DBSys/data/
-cd ../DBSys
+# 생성된 .tbl 파일을 data/ 디렉토리로 복사
+cp part.tbl partsupp.tbl ../dbsysproject/data/
+cd ../dbsysproject
 ```
 
 **Scale Factor 옵션:**
