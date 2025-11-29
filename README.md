@@ -2,6 +2,31 @@
 
 TPC-H PART와 PARTSUPP 테이블에 대한 Block Nested Loops Join 구현
 
+## 🚀 빠른 시작 (WSL)
+
+**30초 만에 실행하기:**
+
+```cmd
+REM 1. 데이터 생성 (WSL 사용)
+generate_data.bat
+
+REM 2. 빌드
+build-windows.bat
+
+REM 3. 실행
+run-simple.bat
+```
+
+**자세한 실행 방법**: [QUICK_START.md](QUICK_START.md) 참조
+
+**전제 조건**: WSL 설치 필요
+```powershell
+# PowerShell 관리자 권한
+wsl --install
+```
+
+---
+
 ## 프로젝트 개요
 
 이 프로젝트는 데이터베이스 시스템의 핵심 연산인 Join을 Block Nested Loops 알고리즘으로 구현한 것입니다. C++로 작성되었으며, 고정 크기 블록에 가변 길이 레코드를 저장하는 방식을 사용합니다.
@@ -75,15 +100,35 @@ DBSys/
 ## 빌드 방법
 
 ### 요구사항
-- C++11 이상 지원 컴파일러 (g++)
-- Make
-- Ubuntu/Linux 환경
+- **Windows 10/11** + WSL 2
+- **Visual Studio 2019+** 또는 **MinGW**
+- **CMake** (Visual Studio에 포함)
 
-### 컴파일
-```bash
-make                # 최적화 빌드
-make debug          # 디버그 빌드
-make clean          # 빌드 파일 삭제
+### WSL 설치 (필수)
+
+```powershell
+# PowerShell 관리자 권한으로 실행
+wsl --install
+
+# 재부팅 후 확인
+wsl --list
+```
+
+### 빌드 (Windows)
+
+**간편 빌드 (권장):**
+```cmd
+build-windows.bat
+```
+
+**수동 빌드:**
+```cmd
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+cd ..
+copy build\Release\dbsys.exe dbsys.exe
 ```
 
 ## 사용 방법
@@ -349,80 +394,79 @@ Memory Usage: 40960 bytes (0.039 MB)
 3. **테이블 크기**:
    - 작은 테이블을 Outer로 선택하면 성능 향상
 
-## TPC-H 테스트 데이터 준비
+## TPC-H 테스트 데이터 준비 (WSL)
 
-### 방법 1: TPC-H 데이터 생성
+### ⭐ 자동 생성 (가장 쉬움)
+
+```cmd
+generate_data.bat
+REM 메뉴에서 [2] Scale 0.1 선택 (과제 제출 권장)
+```
+
+**자세한 가이드**: [GENERATE_DATA.md](GENERATE_DATA.md) 참조
+
+---
+
+### 수동 생성
 
 ```bash
-# TPC-H dbgen 도구 다운로드 및 컴파일
+# WSL 시작
+wsl
+
+# dbgen 다운로드 및 빌드
+cd ~
 git clone https://github.com/electrum/tpch-dbgen.git
 cd tpch-dbgen
 make
 
-# 데이터 생성 (Scale Factor에 따라 크기 조절)
-./dbgen -s 0.1          # 0.1 = 약 100MB
-./dbgen -s 1            # 1 = 약 1GB
+# 데이터 생성
+./dbgen -s 0.1    # Scale 0.1 = 약 100MB (과제 제출 권장)
 
-# 생성된 .tbl 파일을 DBSys data/ 디렉토리로 복사
-cp part.tbl partsupp.tbl ../DBSys/data/
-cd ../DBSys
+# Windows 프로젝트 폴더로 복사
+cp part.tbl partsupp.tbl /mnt/c/Users/YourName/dbsysproject/data/
+exit
 ```
 
 **Scale Factor 옵션:**
-- `-s 0.01`: 매우 작은 테스트 데이터 (~10MB)
-- `-s 0.1`: 소규모 테스트 데이터 (~100MB)
-- `-s 1`: 표준 크기 (1GB)
-- `-s 10`: 대규모 벤치마크 (10GB)
+- `-s 0.01`: 매우 작음 (~10MB) - 빠른 테스트
+- `-s 0.1`: 작음 (~100MB) - 과제 제출 권장 ⭐
+- `-s 1`: 표준 (~1GB) - 성능 벤치마크
+- `-s 10`: 큰 크기 (~10GB) - 대규모 테스트
 
-### 방법 2: 기존 TPC-H 파일 사용
+**경로 변환:**
+- Windows: `C:\Users\YourName\dbsysproject`
+- WSL: `/mnt/c/Users/YourName/dbsysproject`
 
-이미 TPC-H .tbl 파일을 가지고 있다면 data/ 디렉토리에 복사:
 
-```bash
-cp /path/to/part.tbl data/
-cp /path/to/partsupp.tbl data/
+## 빠른 시작 가이드 (WSL)
+
+전체 과정 (3단계):
+
+```cmd
+REM 1. 데이터 생성 (WSL 자동 사용)
+generate_data.bat
+
+REM 2. 빌드
+build-windows.bat
+
+REM 3. 실행
+run-simple.bat
 ```
 
-### 방법 3: 샘플 데이터로 빠른 테스트
+**또는 수동 실행:**
+```cmd
+REM 데이터 변환
+dbsys.exe --convert-csv --csv-file data\part.tbl --block-file data\part.dat --table-type PART
+dbsys.exe --convert-csv --csv-file data\partsupp.tbl --block-file data\partsupp.dat --table-type PARTSUPP
 
-포함된 샘플 데이터를 사용하여 바로 테스트 가능:
-```bash
-# data/part_sample.dat, data/partsupp_sample.dat 파일이 이미 포함되어 있습니다
-# 아래 "실행 예제" 섹션 참고
-```
-
-## 빠른 시작 가이드
-
-전체 과정을 한눈에:
-
-```bash
-# 1. 빌드
-make
-
-# 2. TPC-H 데이터가 있다면 data/ 디렉토리에 복사
-cp /path/to/part.tbl data/
-cp /path/to/partsupp.tbl data/
-
-# 3. CSV → Block 변환
-./dbsys --convert-csv --csv-file data/part.tbl --block-file data/part.dat --table-type PART
-./dbsys --convert-csv --csv-file data/partsupp.tbl --block-file data/partsupp.dat --table-type PARTSUPP
-
-# 4. Join 실행
-./dbsys --join \
-  --outer-table data/part.dat \
-  --inner-table data/partsupp.dat \
-  --outer-type PART \
-  --inner-type PARTSUPP \
-  --output output/result.dat \
+REM Join 실행
+dbsys.exe --join ^
+  --outer-table data\part.dat ^
+  --inner-table data\partsupp.dat ^
+  --outer-type PART ^
+  --inner-type PARTSUPP ^
+  --output output\result.dat ^
   --buffer-size 10
-
-# 5. 샘플 데이터로 빠른 테스트 (데이터 변환 없이 바로 실행)
-./dbsys --join \
-  --outer-table data/part_sample.dat \
-  --inner-table data/partsupp_sample.dat \
-  --outer-type PART \
-  --inner-type PARTSUPP \
-  --output output/result.dat
 ```
 
 ## 트러블슈팅
